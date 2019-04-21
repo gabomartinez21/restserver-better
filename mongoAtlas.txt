@@ -1,0 +1,5 @@
+user: pandatester
+pass: cpSCCykoOQgnz8C1
+
+Mongo URL
+mongodb+srv://pandatester:<password>@cluster0-bexgb.mongodb.net/coffe
