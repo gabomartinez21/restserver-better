@@ -4,13 +4,23 @@ const bcrypt = require('bcrypt');
 
 const _=require('underscore');
 
-const Usuario = require('../modelos/usuarios')
+const Usuario = require('../modelos/usuarios');
+
+const {verificaToken, verificaAdminRole} = require('../middlewares/autenticacion');
 
 const app = express();
 
+//El segundo argumento cuando realizamos una solicitud se le llama middleware
 
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verificaToken ,(req, res) => {
     //  res.json('get Usuario LOCAL!!!');
+
+    // return res.json({
+    //     usuario:req.usuario,
+    //     nombre:req.usuario.nombre,
+    //     email:req.usuario.email
+    // })
+
     let desde = req.query.desde || 0;
     desde = Number(desde);
     let limite = req.query.limite || 5;
@@ -38,7 +48,7 @@ app.get('/usuario', function(req, res) {
             })
  });
  
- app.post('/usuario', function(req, res) {
+ app.post('/usuario', [verificaToken, verificaAdminRole] ,function(req, res) {
 
     /***NOTA:
      * 
@@ -84,8 +94,12 @@ app.get('/usuario', function(req, res) {
  */
  });
  
- app.put('/usuario/:id', function(req, res) {
- 
+ app.put('/usuario/:id',[verificaToken, verificaAdminRole], function(req, res) {
+    return res.json({
+        usuario:req.usuario,
+        nombre:req.usuario.nombre,
+        email:req.usuario.email
+    })
      let id = req.params.id;
     //  Utilizamos la libreria underscore.js para solo escoger que keys del objeto queremos validar, en este caso no queremos validar ni el password ni google asi que escogemos los demas
      let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
@@ -108,8 +122,12 @@ app.get('/usuario', function(req, res) {
      
  });
  
- app.delete('/usuario/:id', function(req, res) {
-     
+ app.delete('/usuario/:id', [verificaToken, verificaAdminRole] ,function(req, res) {
+    return res.json({
+        usuario:req.usuario,
+        nombre:req.usuario.nombre,
+        email:req.usuario.email
+    })
     let id = req.params.id;
 
     // Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
